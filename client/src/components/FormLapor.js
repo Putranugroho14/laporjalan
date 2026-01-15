@@ -582,7 +582,7 @@ function FormLapor() {
                       screenshotFormat="image/jpeg"
                       width="100%"
                       height="100%"
-                      mirrored={false}
+                      mirrored={facingMode === "user"}
                       videoConstraints={{
                         facingMode,
                         aspectRatio
@@ -596,7 +596,14 @@ function FormLapor() {
                           setZoomSupported(true);
                           setMaxZoom(capabilities.zoom.max);
                           setMinZoom(capabilities.zoom.min);
-                          setZoom(capabilities.zoom.min); // Reset to min
+
+                          // Default to 1x if possible, else min
+                          if (capabilities.zoom.min <= 1 && capabilities.zoom.max >= 1) {
+                            setZoom(1);
+                            track.applyConstraints({ advanced: [{ zoom: 1 }] });
+                          } else {
+                            setZoom(capabilities.zoom.min);
+                          }
                         } else {
                           setZoomSupported(false);
                         }
