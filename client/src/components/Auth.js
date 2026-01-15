@@ -369,7 +369,8 @@ function Auth() {
         ...overlayPanelStyleBase,
         transform: isMobile ? 'none' : (isLoginActive ? 'translateX(-20%)' : 'translateX(0)'),
         left: 0,
-        display: isMobile ? (!isLoginActive ? 'none' : 'flex') : 'flex',
+        // On Mobile: If Register Active (!isLoginActive), show "Have Account?" (Left Panel)
+        display: isMobile ? (!isLoginActive ? 'flex' : 'none') : 'flex',
         width: isMobile ? '100%' : '50%',
         padding: isMobile ? '30px 20px' : '0 40px',
     };
@@ -381,7 +382,8 @@ function Auth() {
         ...overlayPanelStyleBase,
         transform: isMobile ? 'none' : (isLoginActive ? 'translateX(0)' : 'translateX(20%)'),
         right: 0,
-        display: isMobile ? (isLoginActive ? 'none' : 'flex') : 'flex',
+        // On Mobile: If Login Active, show "New Here?" (Right Panel)
+        display: isMobile ? (isLoginActive ? 'flex' : 'none') : 'flex',
         width: isMobile ? '100%' : '50%',
         padding: isMobile ? '30px 20px' : '0 40px',
     };
