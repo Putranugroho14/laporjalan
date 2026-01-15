@@ -347,190 +347,133 @@ function FormLapor() {
   // ... (inside the component body)
 
   const toggleCamera = useCallback(() => {
+    setFacingMode(prev => prev === "user" ? "environment" : "user");
+  }, []);
 
+  const mapTitleStyle = {
+    fontSize: '16px',
+    fontWeight: '600',
+    color: '#fff',
+    marginBottom: '12px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+  };
 
-    // ... (in render)
+  const mapContainerStyle = {
+    flex: 1,
+    borderRadius: borderRadius.lg,
+    overflow: 'hidden',
+    boxShadow: shadows.md,
+    minHeight: '300px',
+    border: '1px solid rgba(255,255,255,0.1)',
+  };
 
-    {/* iPhone-style Zoom Buttons */ }
-    {
-      zoomSupported && !image && (
-        <div style={{
-          position: 'absolute',
-          bottom: '90px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          display: 'flex',
-          gap: '12px',
-          zIndex: 20,
-          background: 'rgba(0,0,0,0.4)',
-          padding: '6px 12px',
-          borderRadius: '24px',
-          backdropFilter: 'blur(4px)',
-          border: '1px solid rgba(255,255,255,0.1)'
-        }}>
-          {/* Always show 1x. Show others if supported */}
-          {[1, 2, 5]
-            .filter(z => z <= maxZoom && z >= minZoom)
-            .concat(minZoom < 1 ? [minZoom] : []) // Add 0.5x if minZoom is low
-            .sort((a, b) => a - b)
-            .filter((v, i, a) => a.indexOf(v) === i) // Unique
-            .map(zoomLevel => (
-              <button
-                key={zoomLevel}
-                onClick={(e) => {
-                  e.preventDefault();
-                  setZoom(zoomLevel);
-                  const track = webcamRef.current.stream.getVideoTracks()[0];
-                  track.applyConstraints({ advanced: [{ zoom: zoomLevel }] });
-                }}
-                style={{
-                  background: zoom === zoomLevel ? '#facc15' : 'rgba(255,255,255,0.1)', // Yellow active
-                  color: zoom === zoomLevel ? '#000' : '#fff',
-                  border: zoom === zoomLevel ? 'none' : '1px solid rgba(255,255,255,0.2)',
-                  borderRadius: '50%',
-                  width: '36px',
-                  height: '36px',
-                  fontSize: '11px',
-                  fontWeight: '700',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  boxShadow: zoom === zoomLevel ? '0 0 10px rgba(250, 204, 21, 0.4)' : 'none'
-                }}
-              >
-                {zoomLevel < 1 ? '.5' : zoomLevel}x
-              </button>
-            ))}
-        </div>
-      )
-    }
+  const formTitleStyle = {
+    fontSize: '24px',
+    fontWeight: '700',
+    color: '#fff',
+    marginBottom: '24px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+  };
 
-    const mapTitleStyle = {
-      fontSize: '16px',
-      fontWeight: '600',
-      color: '#fff',
-      marginBottom: '12px',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '8px',
-    };
+  const formGridStyle = {
+    display: 'grid',
+    gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
+    gap: '20px',
+  };
 
-    const mapContainerStyle = {
-      flex: 1,
-      borderRadius: borderRadius.lg,
-      overflow: 'hidden',
-      boxShadow: shadows.md,
-      minHeight: '300px',
-      border: '1px solid rgba(255,255,255,0.1)',
-    };
+  const formGroupStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px',
+  };
 
-    const formTitleStyle = {
-      fontSize: '24px',
-      fontWeight: '700',
-      color: '#fff',
-      marginBottom: '24px',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '12px',
-    };
+  const labelStyle = {
+    fontSize: '14px',
+    fontWeight: '600',
+    color: 'rgba(255,255,255,0.8)',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+  };
 
-    const formGridStyle = {
-      display: 'grid',
-      gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
-      gap: '20px',
-    };
+  const inputStyle = (fieldName) => ({
+    ...inputBaseStyle,
+    borderColor: focusedField === fieldName ? '#3b82f6' : 'rgba(255, 255, 255, 0.1)',
+    boxShadow: focusedField === fieldName ? '0 0 0 2px rgba(59, 130, 246, 0.2)' : 'none',
+  });
 
-    const formGroupStyle = {
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '8px',
-    };
+  const textareaStyle = (fieldName) => ({
+    ...inputBaseStyle,
+    minHeight: '120px',
+    resize: 'vertical',
+    fontFamily: 'inherit',
+    borderColor: focusedField === fieldName ? '#3b82f6' : 'rgba(255, 255, 255, 0.1)',
+    boxShadow: focusedField === fieldName ? '0 0 0 2px rgba(59, 130, 246, 0.2)' : 'none',
+  });
 
-    const labelStyle = {
-      fontSize: '14px',
-      fontWeight: '600',
-      color: 'rgba(255,255,255,0.8)',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '8px',
-    };
+  const submitButtonStyle = {
+    ...buttons.primary,
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '12px',
+    marginTop: '24px',
+    borderRadius: '50px',
+    opacity: (!image || !coords || isSubmitting) ? 0.5 : 1,
+    cursor: (!image || !coords || isSubmitting) ? 'not-allowed' : 'pointer',
+    boxShadow: '0 4px 15px rgba(37, 99, 235, 0.4)',
+    color: '#fff',
+  };
 
-    const inputStyle = (fieldName) => ({
-      ...inputBaseStyle,
-      borderColor: focusedField === fieldName ? '#3b82f6' : 'rgba(255, 255, 255, 0.1)',
-      boxShadow: focusedField === fieldName ? '0 0 0 2px rgba(59, 130, 246, 0.2)' : 'none',
-    });
+  const successMessageStyle = {
+    ...darkGlassCard,
+    background: 'rgba(52, 199, 89, 0.2)', // More visible success green
+    border: `1px solid ${colors.success}`,
+    padding: '16px 24px',
+    marginBottom: '20px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    color: colors.success,
+    fontWeight: '600',
+    animation: 'slideDown 0.4s ease-out',
+  };
 
-    const textareaStyle = (fieldName) => ({
-      ...inputBaseStyle,
-      minHeight: '120px',
-      resize: 'vertical',
-      fontFamily: 'inherit',
-      borderColor: focusedField === fieldName ? '#3b82f6' : 'rgba(255, 255, 255, 0.1)',
-      boxShadow: focusedField === fieldName ? '0 0 0 2px rgba(59, 130, 246, 0.2)' : 'none',
-    });
+  const headerStyle = {
+    textAlign: 'center',
+    marginBottom: '40px',
+  };
 
-    const submitButtonStyle = {
-      ...buttons.primary,
-      width: '100%',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: '12px',
-      marginTop: '24px',
-      borderRadius: '50px',
-      opacity: (!image || !coords || isSubmitting) ? 0.5 : 1,
-      cursor: (!image || !coords || isSubmitting) ? 'not-allowed' : 'pointer',
-      boxShadow: '0 4px 15px rgba(37, 99, 235, 0.4)',
-      color: '#fff',
-    };
+  const pageTitleStyle = {
+    fontSize: isMobile ? '32px' : '56px',
+    fontWeight: '900',
+    background: 'linear-gradient(135deg, #fff 0%, #3b82f6 50%, #2563eb 100%)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    backgroundClip: 'text',
+    marginBottom: '16px',
+    letterSpacing: isMobile ? '-1px' : '-2px',
+    filter: 'drop-shadow(0 0 15px rgba(59, 130, 246, 0.3))',
+  };
 
-    const successMessageStyle = {
-      ...darkGlassCard,
-      background: 'rgba(52, 199, 89, 0.2)', // More visible success green
-      border: `1px solid ${colors.success}`,
-      padding: '16px 24px',
-      marginBottom: '20px',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '12px',
-      color: colors.success,
-      fontWeight: '600',
-      animation: 'slideDown 0.4s ease-out',
-    };
+  const pageSubtitleStyle = {
+    fontSize: '18px',
+    color: 'rgba(255, 255, 255, 0.6)',
+    maxWidth: '600px',
+    margin: '0 auto',
+    lineHeight: '1.6',
+    letterSpacing: '0.5px',
+  };
 
-    const headerStyle = {
-      textAlign: 'center',
-      marginBottom: '40px',
-    };
-
-    const pageTitleStyle = {
-      fontSize: isMobile ? '32px' : '56px',
-      fontWeight: '900',
-      background: 'linear-gradient(135deg, #fff 0%, #3b82f6 50%, #2563eb 100%)',
-      WebkitBackgroundClip: 'text',
-      WebkitTextFillColor: 'transparent',
-      backgroundClip: 'text',
-      marginBottom: '16px',
-      letterSpacing: isMobile ? '-1px' : '-2px',
-      filter: 'drop-shadow(0 0 15px rgba(59, 130, 246, 0.3))',
-    };
-
-    const pageSubtitleStyle = {
-      fontSize: '18px',
-      color: 'rgba(255, 255, 255, 0.6)',
-      maxWidth: '600px',
-      margin: '0 auto',
-      lineHeight: '1.6',
-      letterSpacing: '0.5px',
-    };
-
-    return (
-      <>
-        <style>
-          {`
+  return (
+    <>
+      <style>
+        {`
           @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.4; }
@@ -553,363 +496,363 @@ function FormLapor() {
             color: #fff !important;
           }
         `}
-        </style>
+      </style>
 
-        <div style={containerStyle}>
-          <div style={headerStyle}>
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
+      <div style={containerStyle}>
+        <div style={headerStyle}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
+            <div style={{
+              padding: '16px',
+              background: 'rgba(59, 130, 246, 0.1)',
+              borderRadius: '24px',
+              border: '1px solid rgba(59, 130, 246, 0.2)',
+              boxShadow: '0 0 20px rgba(59, 130, 246, 0.2)'
+            }}>
+              <Map size={40} color="#3b82f6" />
+            </div>
+          </div>
+          <h1 style={pageTitleStyle}>Lapor Kerusakan Jalan</h1>
+          <div style={{
+            width: '80px',
+            height: '4px',
+            background: 'linear-gradient(to right, transparent, #3b82f6, transparent)',
+            margin: '20px auto',
+            borderRadius: '2px',
+          }} />
+          <p style={pageSubtitleStyle}>Bantu kami memetakan infrastruktur yang butuh perbaikan untuk perjalanan yang lebih aman</p>
+        </div>
+
+        {/* New Guide Section */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+          gap: '20px',
+          marginBottom: '40px',
+        }}>
+          {[
+            { icon: Camera, title: '1. Ambil Foto', desc: 'Foto jalan rusak dengan jelas.' },
+            { icon: MapPin, title: '2. Lokasi Otomatis', desc: 'GPS akan mendeteksi lokasi Anda.' },
+            { icon: FileText, title: '3. Isi Detail', desc: 'Lengkapi data kerusakan jalan.' }
+          ].map((item, idx) => (
+            <div key={idx} style={{
+              background: 'rgba(255,255,255,0.05)',
+              borderRadius: '16px',
+              padding: '20px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '16px',
+              border: '1px solid rgba(255,255,255,0.1)'
+            }}>
               <div style={{
-                padding: '16px',
-                background: 'rgba(59, 130, 246, 0.1)',
-                borderRadius: '24px',
-                border: '1px solid rgba(59, 130, 246, 0.2)',
-                boxShadow: '0 0 20px rgba(59, 130, 246, 0.2)'
+                background: 'rgba(37, 99, 235, 0.2)',
+                padding: '12px',
+                borderRadius: '12px',
+                color: colors.primary
               }}>
-                <Map size={40} color="#3b82f6" />
+                <item.icon size={24} />
+              </div>
+              <div>
+                <h4 style={{ color: '#fff', marginBottom: '4px', fontWeight: '600' }}>{item.title}</h4>
+                <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '13px', margin: 0 }}>{item.desc}</p>
               </div>
             </div>
-            <h1 style={pageTitleStyle}>Lapor Kerusakan Jalan</h1>
-            <div style={{
-              width: '80px',
-              height: '4px',
-              background: 'linear-gradient(to right, transparent, #3b82f6, transparent)',
-              margin: '20px auto',
-              borderRadius: '2px',
-            }} />
-            <p style={pageSubtitleStyle}>Bantu kami memetakan infrastruktur yang butuh perbaikan untuk perjalanan yang lebih aman</p>
-          </div>
+          ))}
+        </div>
 
-          {/* New Guide Section */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-            gap: '20px',
-            marginBottom: '40px',
-          }}>
-            {[
-              { icon: Camera, title: '1. Ambil Foto', desc: 'Foto jalan rusak dengan jelas.' },
-              { icon: MapPin, title: '2. Lokasi Otomatis', desc: 'GPS akan mendeteksi lokasi Anda.' },
-              { icon: FileText, title: '3. Isi Detail', desc: 'Lengkapi data kerusakan jalan.' }
-            ].map((item, idx) => (
-              <div key={idx} style={{
-                background: 'rgba(255,255,255,0.05)',
-                borderRadius: '16px',
-                padding: '20px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '16px',
-                border: '1px solid rgba(255,255,255,0.1)'
-              }}>
-                <div style={{
-                  background: 'rgba(37, 99, 235, 0.2)',
-                  padding: '12px',
-                  borderRadius: '12px',
-                  color: colors.primary
-                }}>
-                  <item.icon size={24} />
-                </div>
-                <div>
-                  <h4 style={{ color: '#fff', marginBottom: '4px', fontWeight: '600' }}>{item.title}</h4>
-                  <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '13px', margin: 0 }}>{item.desc}</p>
-                </div>
+
+
+        <div style={mainGridStyle} className="main-grid">
+
+          {/* LEFT COLUMN: Visual Evidence (Camera + Map) */}
+          <div style={leftColumnStyle} className="left-column">
+
+            {/* Camera Section */}
+            <div style={evidenceCardStyle}>
+              <div style={mapTitleStyle}>
+                <Camera size={20} color={colors.primary} />
+                Bukti Foto
               </div>
-            ))}
-          </div>
 
+              <div style={cameraViewStyle}>
+                {image ? (
+                  <img src={image} alt="Capture" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <>
+                    <Webcam
+                      audio={false}
+                      ref={webcamRef}
+                      screenshotFormat="image/jpeg"
+                      width="100%"
+                      height="100%"
+                      mirrored={false}
+                      videoConstraints={{
+                        facingMode,
+                        aspectRatio
+                      }}
+                      style={{ objectFit: 'cover' }}
+                      onUserMedia={(stream) => {
+                        // Check for zoom capabilities
+                        const track = stream.getVideoTracks()[0];
+                        const capabilities = track.getCapabilities();
+                        if (capabilities.zoom) {
+                          setZoomSupported(true);
+                          setMaxZoom(capabilities.zoom.max);
+                          setMinZoom(capabilities.zoom.min);
+                          setZoom(capabilities.zoom.min); // Reset to min
+                        } else {
+                          setZoomSupported(false);
+                        }
+                      }}
+                    />
 
+                    {/* Ratio Controls */}
+                    <div style={ratioContainerStyle}>
+                      <button
+                        onClick={() => setAspectRatio(4 / 3)}
+                        style={ratioButtonStyle(aspectRatio === 4 / 3)}
+                      >
+                        4:3
+                      </button>
+                      <button
+                        onClick={() => setAspectRatio(16 / 9)}
+                        style={ratioButtonStyle(aspectRatio === 16 / 9)}
+                      >
+                        16:9
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
 
-          <div style={mainGridStyle} className="main-grid">
-
-            {/* LEFT COLUMN: Visual Evidence (Camera + Map) */}
-            <div style={leftColumnStyle} className="left-column">
-
-              {/* Camera Section */}
-              <div style={evidenceCardStyle}>
-                <div style={mapTitleStyle}>
-                  <Camera size={20} color={colors.primary} />
-                  Bukti Foto
-                </div>
-
-                <div style={cameraViewStyle}>
-                  {image ? (
-                    <img src={image} alt="Capture" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  ) : (
-                    <>
-                      <Webcam
-                        audio={false}
-                        ref={webcamRef}
-                        screenshotFormat="image/jpeg"
-                        width="100%"
-                        height="100%"
-                        mirrored={false}
-                        videoConstraints={{
-                          facingMode,
-                          aspectRatio
+              {/* Zoom Controls - Outside and Below Camera */}
+              {zoomSupported && !image && facingMode === 'environment' && (
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  gap: '12px',
+                  padding: '8px 16px',
+                  background: 'rgba(0,0,0,0.3)',
+                  borderRadius: '24px',
+                  width: 'fit-content',
+                  margin: '0 auto',
+                  marginBottom: '10px',
+                  backdropFilter: 'blur(4px)',
+                  border: '1px solid rgba(255,255,255,0.1)'
+                }}>
+                  {[0.5, 1, 2]
+                    .filter(z => (z >= minZoom && z <= maxZoom) || (z === 0.5 && minZoom < 1) || z === 1) // Show if capable
+                    .sort((a, b) => a - b)
+                    .map(zoomLevel => (
+                      <button
+                        key={zoomLevel}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setZoom(zoomLevel);
+                          const track = webcamRef.current.stream.getVideoTracks()[0];
+                          track.applyConstraints({ advanced: [{ zoom: zoomLevel }] });
                         }}
-                        style={{ objectFit: 'cover' }}
-                        onUserMedia={(stream) => {
-                          // Check for zoom capabilities
-                          const track = stream.getVideoTracks()[0];
-                          const capabilities = track.getCapabilities();
-                          if (capabilities.zoom) {
-                            setZoomSupported(true);
-                            setMaxZoom(capabilities.zoom.max);
-                            setMinZoom(capabilities.zoom.min);
-                            setZoom(capabilities.zoom.min); // Reset to min
-                          } else {
-                            setZoomSupported(false);
-                          }
+                        style={{
+                          background: zoom === zoomLevel ? '#facc15' : 'rgba(255,255,255,0.1)',
+                          color: zoom === zoomLevel ? '#000' : '#fff',
+                          border: zoom === zoomLevel ? 'none' : '1px solid rgba(255,255,255,0.2)',
+                          borderRadius: '50%',
+                          width: '36px',
+                          height: '36px',
+                          fontSize: '11px',
+                          fontWeight: '700',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s',
+                          boxShadow: zoom === zoomLevel ? '0 0 10px rgba(250, 204, 21, 0.4)' : 'none'
                         }}
-                      />
-
-                      {/* Ratio Controls */}
-                      <div style={ratioContainerStyle}>
-                        <button
-                          onClick={() => setAspectRatio(4 / 3)}
-                          style={ratioButtonStyle(aspectRatio === 4 / 3)}
-                        >
-                          4:3
-                        </button>
-                        <button
-                          onClick={() => setAspectRatio(16 / 9)}
-                          style={ratioButtonStyle(aspectRatio === 16 / 9)}
-                        >
-                          16:9
-                        </button>
-                      </div>
-                    </>
-                  )}
+                      >
+                        {zoomLevel < 1 ? '.5' : zoomLevel}x
+                      </button>
+                    ))}
                 </div>
+              )}
 
-                {/* Zoom Controls - Outside and Below Camera */}
-                {zoomSupported && !image && facingMode === 'environment' && (
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    gap: '12px',
-                    padding: '8px 16px',
-                    background: 'rgba(0,0,0,0.3)',
-                    borderRadius: '24px',
-                    width: 'fit-content',
-                    margin: '0 auto',
-                    marginBottom: '10px',
-                    backdropFilter: 'blur(4px)',
-                    border: '1px solid rgba(255,255,255,0.1)'
-                  }}>
-                    {[0.5, 1, 2]
-                      .filter(z => (z >= minZoom && z <= maxZoom) || (z === 0.5 && minZoom < 1) || z === 1) // Show if capable
-                      .sort((a, b) => a - b)
-                      .map(zoomLevel => (
-                        <button
-                          key={zoomLevel}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setZoom(zoomLevel);
-                            const track = webcamRef.current.stream.getVideoTracks()[0];
-                            track.applyConstraints({ advanced: [{ zoom: zoomLevel }] });
-                          }}
-                          style={{
-                            background: zoom === zoomLevel ? '#facc15' : 'rgba(255,255,255,0.1)',
-                            color: zoom === zoomLevel ? '#000' : '#fff',
-                            border: zoom === zoomLevel ? 'none' : '1px solid rgba(255,255,255,0.2)',
-                            borderRadius: '50%',
-                            width: '36px',
-                            height: '36px',
-                            fontSize: '11px',
-                            fontWeight: '700',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            cursor: 'pointer',
-                            transition: 'all 0.2s',
-                            boxShadow: zoom === zoomLevel ? '0 0 10px rgba(250, 204, 21, 0.4)' : 'none'
-                          }}
-                        >
-                          {zoomLevel < 1 ? '.5' : zoomLevel}x
-                        </button>
-                      ))}
+              <div style={buttonGroupStyle}>
+                {image ? (
+                  <button onClick={() => setImage(null)} style={{ ...retakeButtonStyle, width: '100%', justifyContent: 'center' }}>
+                    <RotateCcw size={20} />
+                    Foto Ulang
+                  </button>
+                ) : (
+                  <div style={{ display: 'flex', gap: '10px', width: '100%' }}>
+                    <button onClick={toggleCamera}
+                      style={{
+                        ...switchButtonStyle,
+                        flex: 1,
+                        justifyContent: 'center',
+                        background: 'rgba(0,0,0,0.7)', // Darker background for visibility
+                        borderColor: 'rgba(255,255,255,0.3)'
+                      }}
+                      title="Ganti Kamera"
+                    >
+                      <SwitchCamera size={20} />
+                    </button>
+                    <button onClick={capture} style={{ ...captureButtonStyle, flex: 2, justifyContent: 'center' }}>
+                      <Camera size={20} />
+                      Ambil Foto
+                    </button>
                   </div>
                 )}
+              </div>
+            </div>
 
-                <div style={buttonGroupStyle}>
-                  {image ? (
-                    <button onClick={() => setImage(null)} style={{ ...retakeButtonStyle, width: '100%', justifyContent: 'center' }}>
-                      <RotateCcw size={20} />
-                      Foto Ulang
-                    </button>
-                  ) : (
-                    <div style={{ display: 'flex', gap: '10px', width: '100%' }}>
-                      <button onClick={toggleCamera}
-                        style={{
-                          ...switchButtonStyle,
-                          flex: 1,
-                          justifyContent: 'center',
-                          background: 'rgba(0,0,0,0.7)', // Darker background for visibility
-                          borderColor: 'rgba(255,255,255,0.3)'
-                        }}
-                        title="Ganti Kamera"
-                      >
-                        <SwitchCamera size={20} />
-                      </button>
-                      <button onClick={capture} style={{ ...captureButtonStyle, flex: 2, justifyContent: 'center' }}>
-                        <Camera size={20} />
-                        Ambil Foto
-                      </button>
+            {/* Map Section */}
+            <div style={evidenceCardStyle}>
+              <div style={mapTitleStyle}>
+                <MapPin size={20} color={colors.primary} />
+                Lokasi GPS
+              </div>
+              <div style={mapContainerStyle}>
+                {coords ? (
+                  <MapContainer center={[coords.lat, coords.lng]} zoom={15} style={{ height: '100%', width: '100%' }}>
+                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                    <Marker position={[coords.lat, coords.lng]}>
+                      <Popup>Lokasi Kejadian</Popup>
+                    </Marker>
+                  </MapContainer>
+                ) : (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: colors.textSecondary }}>
+                    <div style={{ textAlign: 'center' }}>
+                      <MapPin size={48} style={{ marginBottom: '12px', opacity: 0.5 }} />
+                      <p>Mencari lokasi GPS...</p>
                     </div>
-                  )}
+                  </div>
+                )}
+              </div>
+            </div>
+
+          </div>
+
+          {/* RIGHT COLUMN: Form Details */}
+          <div style={rightColumnStyle}>
+            <h3 style={formTitleStyle}>
+              <FileText size={28} />
+              Detail Laporan
+            </h3>
+
+            <form onSubmit={handleSubmit}>
+              <div style={formGridStyle}>
+                {/* New Structured Fields */}
+                <div style={formGroupStyle}>
+                  <label style={labelStyle}>Kategori Kerusakan</label>
+                  <select
+                    value={damageType}
+                    onChange={e => setDamageType(e.target.value)}
+                    onFocus={() => setFocusedField('damageType')}
+                    onBlur={() => setFocusedField(null)}
+                    required
+                    style={selectStyle('damageType')}
+                  >
+                    <option value="">Pilih Kategori</option>
+                    {DAMAGE_TYPES.map(type => (
+                      <option key={type} value={type}>{type}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div style={formGroupStyle}>
+                  <label style={labelStyle}>Tingkat Kerusakan</label>
+                  <select
+                    value={damageSeverity}
+                    onChange={e => setDamageSeverity(e.target.value)}
+                    required
+                    style={selectStyle('damageSeverity')}
+                  >
+                    <option value="">Pilih Tingkat Kerusakan</option>
+                    {SEVERITY_LEVELS.map(level => (
+                      <option key={level} value={level}>{level}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div style={{ ...formGroupStyle, gridColumn: 'span 2' }}>
+                  <label style={labelStyle}>Dampak Lalu Lintas</label>
+                  <div style={radioGroupStyle}>
+                    {TRAFFIC_IMPACTS.map(item => (
+                      <label key={item.value} style={{ ...checkboxLabelStyle, background: trafficImpact === item.value ? 'rgba(74, 144, 226, 0.15)' : checkboxLabelStyle.background }}>
+                        <input
+                          type="radio"
+                          name="trafficImpact"
+                          value={item.value}
+                          checked={trafficImpact === item.value}
+                          onChange={e => setTrafficImpact(e.target.value)}
+                          style={{ accentColor: colors.primary }}
+                        />
+                        <div>
+                          <strong>{item.value}</strong>
+                          <div style={{ fontSize: '12px', opacity: 0.7 }}>{item.desc}</div>
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div style={{ ...formGroupStyle, gridColumn: 'span 2' }}>
+                  <label style={labelStyle}>Kendaraan Terdampak</label>
+                  <div style={checkboxGroupStyle}>
+                    {VEHICLE_TYPES.map(vehicle => {
+                      const isSelected = impactedVehicles.includes(vehicle);
+
+                      return (
+                        <div
+                          key={vehicle}
+                          onClick={() => {
+                            if (isSelected) setImpactedVehicles(impactedVehicles.filter(v => v !== vehicle));
+                            else setImpactedVehicles([...impactedVehicles, vehicle]);
+                          }}
+                          style={{
+                            ...checkboxLabelStyle,
+                            border: isSelected ? `1px solid ${colors.primary}` : '1px solid rgba(255,255,255,0.1)',
+                            background: isSelected ? 'rgba(37, 99, 235, 0.2)' : 'rgba(255,255,255,0.05)',
+                            boxShadow: isSelected ? '0 0 15px rgba(37, 99, 235, 0.3)' : 'none',
+                            justifyContent: 'center', // Center text
+                            textAlign: 'center',
+                          }}
+                        >
+                          <span style={{ fontWeight: isSelected ? '600' : 'normal' }}>{vehicle}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div style={{ ...formGroupStyle, gridColumn: 'span 2' }}>
+                  <label style={labelStyle}>
+                    <MessageSquare size={16} />
+                    Deskripsi Detail (Opsional)
+                  </label>
+                  <textarea
+                    value={description}
+                    onChange={e => setDescription(e.target.value)}
+                    onFocus={() => setFocusedField('description')}
+                    onBlur={() => setFocusedField(null)}
+                    placeholder="Jelaskan kondisi kerusakan jalan secara detail jika diperlukan..."
+                    style={textareaStyle('description')}
+                  />
                 </div>
               </div>
 
-              {/* Map Section */}
-              <div style={evidenceCardStyle}>
-                <div style={mapTitleStyle}>
-                  <MapPin size={20} color={colors.primary} />
-                  Lokasi GPS
-                </div>
-                <div style={mapContainerStyle}>
-                  {coords ? (
-                    <MapContainer center={[coords.lat, coords.lng]} zoom={15} style={{ height: '100%', width: '100%' }}>
-                      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                      <Marker position={[coords.lat, coords.lng]}>
-                        <Popup>Lokasi Kejadian</Popup>
-                      </Marker>
-                    </MapContainer>
-                  ) : (
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: colors.textSecondary }}>
-                      <div style={{ textAlign: 'center' }}>
-                        <MapPin size={48} style={{ marginBottom: '12px', opacity: 0.5 }} />
-                        <p>Mencari lokasi GPS...</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-            </div>
-
-            {/* RIGHT COLUMN: Form Details */}
-            <div style={rightColumnStyle}>
-              <h3 style={formTitleStyle}>
-                <FileText size={28} />
-                Detail Laporan
-              </h3>
-
-              <form onSubmit={handleSubmit}>
-                <div style={formGridStyle}>
-                  {/* New Structured Fields */}
-                  <div style={formGroupStyle}>
-                    <label style={labelStyle}>Kategori Kerusakan</label>
-                    <select
-                      value={damageType}
-                      onChange={e => setDamageType(e.target.value)}
-                      onFocus={() => setFocusedField('damageType')}
-                      onBlur={() => setFocusedField(null)}
-                      required
-                      style={selectStyle('damageType')}
-                    >
-                      <option value="">Pilih Kategori</option>
-                      {DAMAGE_TYPES.map(type => (
-                        <option key={type} value={type}>{type}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div style={formGroupStyle}>
-                    <label style={labelStyle}>Tingkat Kerusakan</label>
-                    <select
-                      value={damageSeverity}
-                      onChange={e => setDamageSeverity(e.target.value)}
-                      required
-                      style={selectStyle('damageSeverity')}
-                    >
-                      <option value="">Pilih Tingkat Kerusakan</option>
-                      {SEVERITY_LEVELS.map(level => (
-                        <option key={level} value={level}>{level}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div style={{ ...formGroupStyle, gridColumn: 'span 2' }}>
-                    <label style={labelStyle}>Dampak Lalu Lintas</label>
-                    <div style={radioGroupStyle}>
-                      {TRAFFIC_IMPACTS.map(item => (
-                        <label key={item.value} style={{ ...checkboxLabelStyle, background: trafficImpact === item.value ? 'rgba(74, 144, 226, 0.15)' : checkboxLabelStyle.background }}>
-                          <input
-                            type="radio"
-                            name="trafficImpact"
-                            value={item.value}
-                            checked={trafficImpact === item.value}
-                            onChange={e => setTrafficImpact(e.target.value)}
-                            style={{ accentColor: colors.primary }}
-                          />
-                          <div>
-                            <strong>{item.value}</strong>
-                            <div style={{ fontSize: '12px', opacity: 0.7 }}>{item.desc}</div>
-                          </div>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div style={{ ...formGroupStyle, gridColumn: 'span 2' }}>
-                    <label style={labelStyle}>Kendaraan Terdampak</label>
-                    <div style={checkboxGroupStyle}>
-                      {VEHICLE_TYPES.map(vehicle => {
-                        const isSelected = impactedVehicles.includes(vehicle);
-
-                        return (
-                          <div
-                            key={vehicle}
-                            onClick={() => {
-                              if (isSelected) setImpactedVehicles(impactedVehicles.filter(v => v !== vehicle));
-                              else setImpactedVehicles([...impactedVehicles, vehicle]);
-                            }}
-                            style={{
-                              ...checkboxLabelStyle,
-                              border: isSelected ? `1px solid ${colors.primary}` : '1px solid rgba(255,255,255,0.1)',
-                              background: isSelected ? 'rgba(37, 99, 235, 0.2)' : 'rgba(255,255,255,0.05)',
-                              boxShadow: isSelected ? '0 0 15px rgba(37, 99, 235, 0.3)' : 'none',
-                              justifyContent: 'center', // Center text
-                              textAlign: 'center',
-                            }}
-                          >
-                            <span style={{ fontWeight: isSelected ? '600' : 'normal' }}>{vehicle}</span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  <div style={{ ...formGroupStyle, gridColumn: 'span 2' }}>
-                    <label style={labelStyle}>
-                      <MessageSquare size={16} />
-                      Deskripsi Detail (Opsional)
-                    </label>
-                    <textarea
-                      value={description}
-                      onChange={e => setDescription(e.target.value)}
-                      onFocus={() => setFocusedField('description')}
-                      onBlur={() => setFocusedField(null)}
-                      placeholder="Jelaskan kondisi kerusakan jalan secara detail jika diperlukan..."
-                      style={textareaStyle('description')}
-                    />
-                  </div>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={!image || !coords || isSubmitting}
-                  style={submitButtonStyle}
-                >
-                  <Send size={20} />
-                  <span>{isSubmitting ? 'Mengirim Laporan...' : 'Kirim Laporan'}</span>
-                </button>
-              </form>
-            </div>
-          </div >
+              <button
+                type="submit"
+                disabled={!image || !coords || isSubmitting}
+                style={submitButtonStyle}
+              >
+                <Send size={20} />
+                <span>{isSubmitting ? 'Mengirim Laporan...' : 'Kirim Laporan'}</span>
+              </button>
+            </form>
+          </div>
         </div >
-      </>
-    );
-  }
+      </div >
+    </>
+  );
+}
 
 export default FormLapor;
