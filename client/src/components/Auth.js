@@ -290,7 +290,7 @@ function Auth() {
 
     const inputIconStyle = {
         position: 'absolute',
-        left: '15px',
+        left: '20px', // Increased from 15px
         top: '50%',
         transform: 'translateY(-50%)',
         color: 'rgba(255,255,255,0.6)',
@@ -299,7 +299,7 @@ function Auth() {
     const inputStyle = {
         backgroundColor: 'rgba(255,255,255,0.05)',
         border: '1px solid rgba(255,255,255,0.1)',
-        padding: '16px 16px 16px 50px', // Added padding left for icon
+        padding: '16px 16px 16px 60px', // Increased left padding from 50px to 60px
         width: '100%',
         borderRadius: '12px',
         color: '#fff',

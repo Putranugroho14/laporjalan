@@ -549,6 +549,7 @@ function FormLapor() {
                       screenshotFormat="image/jpeg"
                       width="100%"
                       height="100%"
+                      mirrored={false}
                       videoConstraints={{ facingMode, aspectRatio }}
                       style={{ objectFit: 'cover' }}
                     />
@@ -582,7 +583,16 @@ function FormLapor() {
                   </button>
                 ) : (
                   <div style={{ display: 'flex', gap: '10px', width: '100%' }}>
-                    <button onClick={toggleCamera} style={{ ...switchButtonStyle, flex: 1, justifyContent: 'center' }} title="Ganti Kamera">
+                    <button onClick={toggleCamera}
+                      style={{
+                        ...switchButtonStyle,
+                        flex: 1,
+                        justifyContent: 'center',
+                        background: 'rgba(0,0,0,0.7)', // Darker background for visibility
+                        borderColor: 'rgba(255,255,255,0.3)'
+                      }}
+                      title="Ganti Kamera"
+                    >
                       <SwitchCamera size={20} />
                     </button>
                     <button onClick={capture} style={{ ...captureButtonStyle, flex: 2, justifyContent: 'center' }}>
