@@ -585,8 +585,12 @@ function FormLapor() {
                       screenshotFormat="image/jpeg"
                       width="100%"
                       height="100%"
-                      mirrored={facingMode === "user"}
-                      videoConstraints={{ facingMode, aspectRatio }}
+                      mirrored={false}
+                      videoConstraints={{
+                        deviceId: activeDeviceId ? { exact: activeDeviceId } : undefined,
+                        facingMode: activeDeviceId ? undefined : facingMode, // Fallback
+                        aspectRatio
+                      }}
                       style={{ objectFit: 'cover' }}
                       onUserMedia={(stream) => {
                         // Check for zoom capabilities
