@@ -373,7 +373,7 @@ function Dashboard() {
     opacity: hoveredCard ? 1 : 0,
     transition: transitions.fast,
   };
-
+  // Fixed style syntax
   const selectStyle = {
     padding: '12px 20px',
     borderRadius: borderRadius.lg,
