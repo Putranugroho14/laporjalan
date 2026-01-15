@@ -34,6 +34,10 @@ function FormLapor() {
   const [damageSeverity, setDamageSeverity] = useState("");
   const [trafficImpact, setTrafficImpact] = useState("");
   const [impactedVehicles, setImpactedVehicles] = useState([]);
+  const [zoom, setZoom] = useState(1);
+  const [maxZoom, setMaxZoom] = useState(1);
+  const [minZoom, setMinZoom] = useState(1);
+  const [zoomSupported, setZoomSupported] = useState(false);
 
   // Options Constants
   const DAMAGE_TYPES = [
@@ -552,7 +556,56 @@ function FormLapor() {
                       mirrored={facingMode === "user"}
                       videoConstraints={{ facingMode, aspectRatio }}
                       style={{ objectFit: 'cover' }}
+                      onUserMedia={(stream) => {
+                        // Check for zoom capabilities
+                        const track = stream.getVideoTracks()[0];
+                        const capabilities = track.getCapabilities();
+                        if (capabilities.zoom) {
+                          setZoomSupported(true);
+                          setMaxZoom(capabilities.zoom.max);
+                          setMinZoom(capabilities.zoom.min);
+                          setZoom(capabilities.zoom.min); // Reset to min
+                        } else {
+                          setZoomSupported(false);
+                        }
+                      }}
                     />
+
+                    {/* Manual Zoom Slider */}
+                    {zoomSupported && !image && (
+                      <div style={{
+                        position: 'absolute',
+                        bottom: '80px',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        width: '60%',
+                        zIndex: 20,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px'
+                      }}>
+                        <span style={{ color: 'white', fontSize: '12px', fontWeight: 'bold' }}>1x</span>
+                        <input
+                          type="range"
+                          min={minZoom}
+                          max={maxZoom}
+                          step="0.1"
+                          value={zoom}
+                          onChange={(e) => {
+                            const val = Number(e.target.value);
+                            setZoom(val);
+                            const track = webcamRef.current.stream.getVideoTracks()[0];
+                            track.applyConstraints({ advanced: [{ zoom: val }] });
+                          }}
+                          style={{
+                            width: '100%',
+                            accentColor: colors.primary
+                          }}
+                        />
+                        <span style={{ color: 'white', fontSize: '12px', fontWeight: 'bold' }}>{maxZoom}x</span>
+                      </div>
+                    )}
+
 
                     {/* Ratio Controls */}
                     <div style={ratioContainerStyle}>
@@ -569,8 +622,6 @@ function FormLapor() {
                         16:9
                       </button>
                     </div>
-
-
                   </>
                 )}
               </div>
