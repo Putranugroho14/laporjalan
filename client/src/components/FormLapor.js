@@ -29,7 +29,8 @@ function FormLapor() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
   // New Fields State
-  const [aspectRatio, setAspectRatio] = useState(16 / 9); // Default 16:9 for modern look
+  // Default aspect ratio: Portrait (9:16) for mobile feel, Landscape (16:9) for desktop
+  const [aspectRatio, setAspectRatio] = useState(window.innerWidth < 768 ? 9 / 16 : 16 / 9);
   const [damageType, setDamageType] = useState("");
   const [damageSeverity, setDamageSeverity] = useState("");
   const [trafficImpact, setTrafficImpact] = useState("");
@@ -613,10 +614,16 @@ function FormLapor() {
                     {/* Ratio Controls */}
                     <div style={ratioContainerStyle}>
                       <button
-                        onClick={() => setAspectRatio(4 / 3)}
-                        style={ratioButtonStyle(aspectRatio === 4 / 3)}
+                        onClick={() => setAspectRatio(3 / 4)}
+                        style={ratioButtonStyle(aspectRatio === 3 / 4)}
                       >
-                        4:3
+                        3:4
+                      </button>
+                      <button
+                        onClick={() => setAspectRatio(9 / 16)}
+                        style={ratioButtonStyle(aspectRatio === 9 / 16)}
+                      >
+                        9:16
                       </button>
                       <button
                         onClick={() => setAspectRatio(16 / 9)}
