@@ -225,8 +225,8 @@ function Auth() {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
-        padding: '0 40px',
+        justifyContent: isMobile ? 'flex-start' : 'center', // Start from top on mobile
+        padding: isMobile ? '60px 40px 40px' : '0 40px', // Add explicit top padding for mobile
         transition: 'all 0.6s ease-in-out',
     };
 
