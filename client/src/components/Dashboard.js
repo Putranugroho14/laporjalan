@@ -374,46 +374,41 @@ function Dashboard() {
     transition: transitions.fast,
   };
 
-  padding: '12px 20px', // More padding
+  const selectStyle = {
+    padding: '12px 20px',
     borderRadius: borderRadius.lg,
-      border: '1px solid rgba(255, 255, 255, 0.2)', // Slightly lighter border
-        background: 'rgba(0, 0, 0, 0.4)', // Darker background to verify contrast (was whiteish)
-          fontSize: '14px',
-            fontWeight: '600',
-              color: '#fff',
-                outline: 'none',
-                  cursor: 'pointer',
-                    backdropFilter: 'blur(10px)',
-                      minWidth: '200px', // Ensure it has width
-                        appearance: 'none', // Remove default arrow to style commonly (or keep default but ensure contrast)
-                          // Actually, keep appearance but fix background.
-                          // The user screenshot shows WHITE BLOCKS.
-                          // The previous code was: background: 'rgba(255, 255, 255, 0.05)'
-                          // If it looks WHITE in the screenshot, maybe browser default styling or specific mobile browser (iOS) rendering of 'select'?
-                          // On iOS, background might default to white if not strictly handled.
-                          // Let's force a dark background explicitly.
-                          backgroundColor: 'rgba(30, 30, 30, 0.8)', 
+    border: '1px solid rgba(255, 255, 255, 0.2)',
+    background: 'rgba(0, 0, 0, 0.4)',
+    fontSize: '14px',
+    fontWeight: '600',
+    color: '#fff',
+    outline: 'none',
+    cursor: 'pointer',
+    backdropFilter: 'blur(10px)',
+    minWidth: '200px',
+    appearance: 'none',
+    backgroundColor: 'rgba(30, 30, 30, 0.8)',
   };
 
-const modalOverlayStyle = {
-  position: 'fixed',
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  background: 'rgba(0,0,0,0.9)',
-  zIndex: 2000,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  padding: '20px',
-  cursor: 'pointer',
-};
+  const modalOverlayStyle = {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'rgba(0,0,0,0.9)',
+    zIndex: 2000,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '20px',
+    cursor: 'pointer',
+  };
 
-return (
-  <>
-    <style>
-      {`
+  return (
+    <>
+      <style>
+        {`
           @media (max-width: 768px) {
             .cards-grid {
               grid-template-columns: 1fr !important;
@@ -425,356 +420,356 @@ return (
             color: #fff !important;
           }
         `}
-    </style>
+      </style>
 
-    {/* Image Modal */}
-    {selectedImage && (
-      <div style={modalOverlayStyle} onClick={() => setSelectedImage(null)}>
-        <img
-          src={selectedImage}
-          alt="Full Size"
-          style={{ maxWidth: '100%', maxHeight: '90vh', borderRadius: '12px', boxShadow: '0 0 50px rgba(0,0,0,0.5)' }}
-          onClick={(e) => e.stopPropagation()}
-        />
-        <button
-          style={{
-            position: 'absolute',
-            top: '20px',
-            right: '20px',
-            background: 'rgba(255,255,255,0.2)',
-            border: 'none',
-            borderRadius: '50%',
-            width: '40px',
-            height: '40px',
-            color: '#fff',
-            fontSize: '20px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-          onClick={() => setSelectedImage(null)}
-        >
-          ×
-        </button>
-      </div>
-    )}
-
-    <div style={containerStyle}>
-      <div style={headerStyle}>
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
-          <div style={{
-            padding: '16px',
-            background: 'rgba(59, 130, 246, 0.1)',
-            borderRadius: '24px',
-            border: '1px solid rgba(59, 130, 246, 0.2)',
-            boxShadow: '0 0 20px rgba(59, 130, 246, 0.2)'
-          }}>
-            <Map size={40} color="#3b82f6" />
-          </div>
-        </div>
-        <h1 style={titleStyle}>Peta Sebaran Laporan</h1>
-        <div style={{
-          width: '80px',
-          height: '4px',
-          background: 'linear-gradient(to right, transparent, #3b82f6, transparent)',
-          margin: '20px auto',
-          borderRadius: '2px',
-        }} />
-        <p style={subtitleStyle}>Klik kartu laporan untuk melihat lokasinya di peta dan memantau kondisi infrastruktur jalan raya</p>
-      </div>
-
-      {/* Map Section */}
-      <div style={mapSectionStyle}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
-          <h2 style={{ ...mapTitleStyle, marginBottom: 0 }}>
-            <MapPin size={28} color={colors.primary} />
-            Peta Interaktif
-          </h2>
-
-          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-            {/* Category Filter */}
-            <select
-              value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value)}
-              style={selectStyle}
-            >
-              <option value="">Semua Kategori</option>
-              {DAMAGE_TYPES.map(type => (
-                <option key={type} value={type}>{type}</option>
-              ))}
-            </select>
-
-            {/* My Reports Filter Toggle */}
-            <button
-              onClick={() => setShowOnlyMyReports(!showOnlyMyReports)}
-              style={{
-                ...selectStyle,
-                background: showOnlyMyReports ? colors.primary : 'rgba(255,255,255,0.05)',
-                color: showOnlyMyReports ? '#fff' : 'rgba(255,255,255,0.7)',
-                border: `1px solid ${showOnlyMyReports ? colors.primary : 'rgba(255,255,255,0.1)'}`,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-              }}
-            >
-              <User size={16} />
-              <span>{showOnlyMyReports ? 'Semua Laporan' : 'Laporan Saya'}</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Map Color Legend */}
-        <div style={{
-          display: 'flex',
-          gap: '20px',
-          marginBottom: '20px',
-          padding: '12px 20px',
-          background: 'rgba(255,255,255,0.03)',
-          borderRadius: borderRadius.lg,
-          border: '1px solid rgba(255,255,255,0.05)',
-          width: 'fit-content',
-          flexWrap: 'wrap'
-        }}>
-          <div style={{ fontSize: '12px', color: '#aaa', marginRight: '10px', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: '700' }}>Tingkat Prioritas:</div>
-          {[
-            { label: 'Darurat', color: '#ef4444' }, // Red
-            { label: 'Tinggi', color: '#f97316' },  // Orange
-            { label: 'Sedang', color: '#3b82f6' },  // Blue
-            { label: 'Rendah', color: '#10b981' }   // Green
-          ].map(item => (
-            <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: '600' }}>
-              <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: item.color, boxShadow: `0 0 10px ${item.color}80` }} />
-              <span>{item.label}</span>
-            </div>
-          ))}
-        </div>
-
-        <div style={mapContainerWrapperStyle}>
-          <MapContainer
-            center={mapCenter}
-            zoom={mapZoom}
-            style={{ height: '100%', width: '100%' }}
-          >
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-            <MapController center={mapCenter} zoom={mapZoom} />
-            {filteredReports.map((lap) => (
-              <Marker
-                key={lap.id}
-                position={[Number(lap.latitude), Number(lap.longitude)]}
-                icon={icons[lap.priority] || icons[lap.damageSeverity] || icons.Default}
-              >
-                <Popup>
-                  <div style={{ minWidth: '200px', textAlign: 'left', color: '#000' }}> {/* Keep popup black text for contrast on white bg, or style popup dark */}
-                    <img
-                      src={lap.photo.startsWith('http') ? lap.photo : `${config.uploads}/${lap.photo}`}
-                      alt="Bukti"
-                      style={{ width: '100%', height: '120px', objectFit: 'cover', borderRadius: '8px', marginBottom: '8px' }}
-                    />
-                    <div style={{ fontWeight: '700', fontSize: '14px', marginBottom: '4px' }}>
-                      {lap.damageType || lap.title}
-                    </div>
-
-                    {/* Details Grid */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '4px', fontSize: '11px', marginBottom: '8px', color: '#666' }}>
-                      <div style={{ fontWeight: '600' }}>Tingkat:</div>
-                      <div>{lap.damageSeverity || '-'}</div>
-
-                      <div style={{ fontWeight: '600' }}>Dampak:</div>
-                      <div>{lap.trafficImpact || '-'}</div>
-
-                      <div style={{ fontWeight: '600' }}>Kendaraan:</div>
-                      <div>
-                        {parseImpactedVehicles(lap.impactedVehicles).join(', ') || '-'}
-                      </div>
-                    </div>
-
-                    <div style={{ fontSize: '12px', marginBottom: '8px', borderTop: '1px solid #eee', paddingTop: '4px' }}>
-                      {lap.description}
-                    </div>
-
-                    <div style={{
-                      display: 'inline-block',
-                      padding: '4px 12px',
-                      borderRadius: '12px',
-                      fontSize: '11px',
-                      fontWeight: '600',
-                      background: `${getStatusColor(lap.status)}20`,
-                      color: getStatusColor(lap.status),
-                    }}>
-                      {lap.status}
-                    </div>
-                  </div>
-                </Popup>
-              </Marker>
-            ))}
-          </MapContainer>
-        </div>
-      </div>
-
-      {/* Cards Grid */}
-      <div style={cardsGridStyle} className="cards-grid">
-        {currentItems.length === 0 ? (
-          <div style={emptyStateStyle}>
-            <MapPin size={64} style={{ opacity: 0.3, marginBottom: '16px' }} />
-            <p style={{ fontSize: '18px', fontWeight: '600' }}>
-              {filterCategory ? 'Tidak ada laporan untuk kategori ini' : 'Belum ada laporan'}
-            </p>
-            <p>Mulai laporkan kerusakan jalan di sekitar Anda</p>
-          </div>
-        ) : (
-          currentItems.map(lap => (
-            <div
-              key={lap.id}
-              style={cardStyle(lap.id)}
-              onMouseEnter={() => setHoveredCard(lap.id)}
-              onMouseLeave={() => setHoveredCard(null)}
-              onClick={() => handleCardClick(lap)}
-            >
-              <div style={cardImageContainerStyle}>
-                <img
-                  src={lap.photo.startsWith('http') ? lap.photo : `${config.uploads}/${lap.photo}`}
-                  alt={lap.title}
-                  style={cardImageStyle}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedImage(lap.photo.startsWith('http') ? lap.photo : `${config.uploads}/${lap.photo}`);
-                  }}
-                />
-                <div style={clickHintStyle}>
-                  <Navigation size={14} />
-                  <span>Lihat di Peta</span>
-                </div>
-                <div style={cardOverlayStyle}>
-                  <h3 style={cardTitleStyle}>{lap.title}</h3>
-                  <div style={cardLocationStyle}>
-                    <MapPin size={14} />
-                    <span>{Number(lap.latitude).toFixed(4)}, {Number(lap.longitude).toFixed(4)}</span>
-                  </div>
-                </div>
-
-                {/* "Milik Anda" Badge */}
-                {lap.pelapor?.nama === currentUserName && (
-                  <div style={{
-                    position: 'absolute',
-                    top: '12px',
-                    left: '12px',
-                    background: colors.primary,
-                    color: '#fff',
-                    padding: '4px 10px',
-                    borderRadius: '100px',
-                    fontSize: '10px',
-                    fontWeight: '800',
-                    textTransform: 'uppercase',
-                    letterSpacing: '1px',
-                    zIndex: 10,
-                    boxShadow: '0 4px 12px rgba(37, 99, 235, 0.4)',
-                  }}>
-                    Milik Anda
-                  </div>
-                )}
-              </div>
-
-              <div style={cardContentStyle}>
-                <p style={cardDescriptionStyle}>{lap.description}</p>
-
-                <div style={cardMetaStyle}>
-                  <div style={cardMetaItemStyle}>
-                    <User size={16} />
-                    <span>{lap.pelapor?.nama || 'Anonymous'}</span>
-                  </div>
-
-                  <div style={statusBadgeStyle(lap.status)}>
-                    {getStatusIcon(lap.status)}
-                    <span>{lap.status}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-
-      {/* Pagination Controls */}
-      {filteredReports.length > itemsPerPage && (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', marginTop: '40px', flexWrap: 'wrap' }}>
-
-          {/* Pages Label */}
-          <div style={{
-            padding: '8px 16px',
-            background: 'rgba(255, 255, 255, 0.1)',
-            color: 'rgba(255, 255, 255, 0.9)',
-            fontWeight: 'bold',
-            fontSize: '14px',
-            borderRadius: borderRadius.md,
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-          }}>
-            Halaman
-          </div>
-
-          {/* Previous */}
+      {/* Image Modal */}
+      {selectedImage && (
+        <div style={modalOverlayStyle} onClick={() => setSelectedImage(null)}>
+          <img
+            src={selectedImage}
+            alt="Full Size"
+            style={{ maxWidth: '100%', maxHeight: '90vh', borderRadius: '12px', boxShadow: '0 0 50px rgba(0,0,0,0.5)' }}
+            onClick={(e) => e.stopPropagation()}
+          />
           <button
-            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
             style={{
-              ...paginationButtonStyle(false),
-              borderRadius: borderRadius.md,
-              opacity: currentPage === 1 ? 0.3 : 1,
-              cursor: currentPage === 1 ? 'default' : 'pointer'
+              position: 'absolute',
+              top: '20px',
+              right: '20px',
+              background: 'rgba(255,255,255,0.2)',
+              border: 'none',
+              borderRadius: '50%',
+              width: '40px',
+              height: '40px',
+              color: '#fff',
+              fontSize: '20px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
             }}
+            onClick={() => setSelectedImage(null)}
           >
-            «
-          </button>
-
-          {/* Page Numbers */}
-          {(() => {
-            const buttons = [];
-            if (totalPages <= 5) {
-              for (let i = 1; i <= totalPages; i++) buttons.push(i);
-            } else {
-              if (currentPage <= 3) {
-                buttons.push(1, 2, 3, '...', totalPages);
-              } else if (currentPage >= totalPages - 2) {
-                buttons.push(1, '...', totalPages - 2, totalPages - 1, totalPages);
-              } else {
-                buttons.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
-              }
-            }
-
-            return buttons.map((btn, idx) => (
-              <button
-                key={idx}
-                onClick={() => typeof btn === 'number' ? paginate(btn) : null}
-                disabled={btn === '...'}
-                style={{
-                  ...paginationButtonStyle(currentPage === btn),
-                  borderRadius: borderRadius.md,
-                  cursor: btn === '...' ? 'default' : 'pointer'
-                }}
-              >
-                {btn}
-              </button>
-            ));
-          })()}
-
-          {/* Next */}
-          <button
-            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-            disabled={currentPage === totalPages}
-            style={{
-              ...paginationButtonStyle(false),
-              borderRadius: borderRadius.md,
-              opacity: currentPage === totalPages ? 0.3 : 1,
-              cursor: currentPage === totalPages ? 'default' : 'pointer'
-            }}
-          >
-            Berikutnya »
+            ×
           </button>
         </div>
       )}
-    </div>
-  </>
-);
+
+      <div style={containerStyle}>
+        <div style={headerStyle}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
+            <div style={{
+              padding: '16px',
+              background: 'rgba(59, 130, 246, 0.1)',
+              borderRadius: '24px',
+              border: '1px solid rgba(59, 130, 246, 0.2)',
+              boxShadow: '0 0 20px rgba(59, 130, 246, 0.2)'
+            }}>
+              <Map size={40} color="#3b82f6" />
+            </div>
+          </div>
+          <h1 style={titleStyle}>Peta Sebaran Laporan</h1>
+          <div style={{
+            width: '80px',
+            height: '4px',
+            background: 'linear-gradient(to right, transparent, #3b82f6, transparent)',
+            margin: '20px auto',
+            borderRadius: '2px',
+          }} />
+          <p style={subtitleStyle}>Klik kartu laporan untuk melihat lokasinya di peta dan memantau kondisi infrastruktur jalan raya</p>
+        </div>
+
+        {/* Map Section */}
+        <div style={mapSectionStyle}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+            <h2 style={{ ...mapTitleStyle, marginBottom: 0 }}>
+              <MapPin size={28} color={colors.primary} />
+              Peta Interaktif
+            </h2>
+
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+              {/* Category Filter */}
+              <select
+                value={filterCategory}
+                onChange={(e) => setFilterCategory(e.target.value)}
+                style={selectStyle}
+              >
+                <option value="">Semua Kategori</option>
+                {DAMAGE_TYPES.map(type => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+              </select>
+
+              {/* My Reports Filter Toggle */}
+              <button
+                onClick={() => setShowOnlyMyReports(!showOnlyMyReports)}
+                style={{
+                  ...selectStyle,
+                  background: showOnlyMyReports ? colors.primary : 'rgba(255,255,255,0.05)',
+                  color: showOnlyMyReports ? '#fff' : 'rgba(255,255,255,0.7)',
+                  border: `1px solid ${showOnlyMyReports ? colors.primary : 'rgba(255,255,255,0.1)'}`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                <User size={16} />
+                <span>{showOnlyMyReports ? 'Semua Laporan' : 'Laporan Saya'}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Map Color Legend */}
+          <div style={{
+            display: 'flex',
+            gap: '20px',
+            marginBottom: '20px',
+            padding: '12px 20px',
+            background: 'rgba(255,255,255,0.03)',
+            borderRadius: borderRadius.lg,
+            border: '1px solid rgba(255,255,255,0.05)',
+            width: 'fit-content',
+            flexWrap: 'wrap'
+          }}>
+            <div style={{ fontSize: '12px', color: '#aaa', marginRight: '10px', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: '700' }}>Tingkat Prioritas:</div>
+            {[
+              { label: 'Darurat', color: '#ef4444' }, // Red
+              { label: 'Tinggi', color: '#f97316' },  // Orange
+              { label: 'Sedang', color: '#3b82f6' },  // Blue
+              { label: 'Rendah', color: '#10b981' }   // Green
+            ].map(item => (
+              <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: '600' }}>
+                <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: item.color, boxShadow: `0 0 10px ${item.color}80` }} />
+                <span>{item.label}</span>
+              </div>
+            ))}
+          </div>
+
+          <div style={mapContainerWrapperStyle}>
+            <MapContainer
+              center={mapCenter}
+              zoom={mapZoom}
+              style={{ height: '100%', width: '100%' }}
+            >
+              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+              <MapController center={mapCenter} zoom={mapZoom} />
+              {filteredReports.map((lap) => (
+                <Marker
+                  key={lap.id}
+                  position={[Number(lap.latitude), Number(lap.longitude)]}
+                  icon={icons[lap.priority] || icons[lap.damageSeverity] || icons.Default}
+                >
+                  <Popup>
+                    <div style={{ minWidth: '200px', textAlign: 'left', color: '#000' }}> {/* Keep popup black text for contrast on white bg, or style popup dark */}
+                      <img
+                        src={lap.photo.startsWith('http') ? lap.photo : `${config.uploads}/${lap.photo}`}
+                        alt="Bukti"
+                        style={{ width: '100%', height: '120px', objectFit: 'cover', borderRadius: '8px', marginBottom: '8px' }}
+                      />
+                      <div style={{ fontWeight: '700', fontSize: '14px', marginBottom: '4px' }}>
+                        {lap.damageType || lap.title}
+                      </div>
+
+                      {/* Details Grid */}
+                      <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '4px', fontSize: '11px', marginBottom: '8px', color: '#666' }}>
+                        <div style={{ fontWeight: '600' }}>Tingkat:</div>
+                        <div>{lap.damageSeverity || '-'}</div>
+
+                        <div style={{ fontWeight: '600' }}>Dampak:</div>
+                        <div>{lap.trafficImpact || '-'}</div>
+
+                        <div style={{ fontWeight: '600' }}>Kendaraan:</div>
+                        <div>
+                          {parseImpactedVehicles(lap.impactedVehicles).join(', ') || '-'}
+                        </div>
+                      </div>
+
+                      <div style={{ fontSize: '12px', marginBottom: '8px', borderTop: '1px solid #eee', paddingTop: '4px' }}>
+                        {lap.description}
+                      </div>
+
+                      <div style={{
+                        display: 'inline-block',
+                        padding: '4px 12px',
+                        borderRadius: '12px',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                        background: `${getStatusColor(lap.status)}20`,
+                        color: getStatusColor(lap.status),
+                      }}>
+                        {lap.status}
+                      </div>
+                    </div>
+                  </Popup>
+                </Marker>
+              ))}
+            </MapContainer>
+          </div>
+        </div>
+
+        {/* Cards Grid */}
+        <div style={cardsGridStyle} className="cards-grid">
+          {currentItems.length === 0 ? (
+            <div style={emptyStateStyle}>
+              <MapPin size={64} style={{ opacity: 0.3, marginBottom: '16px' }} />
+              <p style={{ fontSize: '18px', fontWeight: '600' }}>
+                {filterCategory ? 'Tidak ada laporan untuk kategori ini' : 'Belum ada laporan'}
+              </p>
+              <p>Mulai laporkan kerusakan jalan di sekitar Anda</p>
+            </div>
+          ) : (
+            currentItems.map(lap => (
+              <div
+                key={lap.id}
+                style={cardStyle(lap.id)}
+                onMouseEnter={() => setHoveredCard(lap.id)}
+                onMouseLeave={() => setHoveredCard(null)}
+                onClick={() => handleCardClick(lap)}
+              >
+                <div style={cardImageContainerStyle}>
+                  <img
+                    src={lap.photo.startsWith('http') ? lap.photo : `${config.uploads}/${lap.photo}`}
+                    alt={lap.title}
+                    style={cardImageStyle}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedImage(lap.photo.startsWith('http') ? lap.photo : `${config.uploads}/${lap.photo}`);
+                    }}
+                  />
+                  <div style={clickHintStyle}>
+                    <Navigation size={14} />
+                    <span>Lihat di Peta</span>
+                  </div>
+                  <div style={cardOverlayStyle}>
+                    <h3 style={cardTitleStyle}>{lap.title}</h3>
+                    <div style={cardLocationStyle}>
+                      <MapPin size={14} />
+                      <span>{Number(lap.latitude).toFixed(4)}, {Number(lap.longitude).toFixed(4)}</span>
+                    </div>
+                  </div>
+
+                  {/* "Milik Anda" Badge */}
+                  {lap.pelapor?.nama === currentUserName && (
+                    <div style={{
+                      position: 'absolute',
+                      top: '12px',
+                      left: '12px',
+                      background: colors.primary,
+                      color: '#fff',
+                      padding: '4px 10px',
+                      borderRadius: '100px',
+                      fontSize: '10px',
+                      fontWeight: '800',
+                      textTransform: 'uppercase',
+                      letterSpacing: '1px',
+                      zIndex: 10,
+                      boxShadow: '0 4px 12px rgba(37, 99, 235, 0.4)',
+                    }}>
+                      Milik Anda
+                    </div>
+                  )}
+                </div>
+
+                <div style={cardContentStyle}>
+                  <p style={cardDescriptionStyle}>{lap.description}</p>
+
+                  <div style={cardMetaStyle}>
+                    <div style={cardMetaItemStyle}>
+                      <User size={16} />
+                      <span>{lap.pelapor?.nama || 'Anonymous'}</span>
+                    </div>
+
+                    <div style={statusBadgeStyle(lap.status)}>
+                      {getStatusIcon(lap.status)}
+                      <span>{lap.status}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Pagination Controls */}
+        {filteredReports.length > itemsPerPage && (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', marginTop: '40px', flexWrap: 'wrap' }}>
+
+            {/* Pages Label */}
+            <div style={{
+              padding: '8px 16px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              color: 'rgba(255, 255, 255, 0.9)',
+              fontWeight: 'bold',
+              fontSize: '14px',
+              borderRadius: borderRadius.md,
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+            }}>
+              Halaman
+            </div>
+
+            {/* Previous */}
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              style={{
+                ...paginationButtonStyle(false),
+                borderRadius: borderRadius.md,
+                opacity: currentPage === 1 ? 0.3 : 1,
+                cursor: currentPage === 1 ? 'default' : 'pointer'
+              }}
+            >
+              «
+            </button>
+
+            {/* Page Numbers */}
+            {(() => {
+              const buttons = [];
+              if (totalPages <= 5) {
+                for (let i = 1; i <= totalPages; i++) buttons.push(i);
+              } else {
+                if (currentPage <= 3) {
+                  buttons.push(1, 2, 3, '...', totalPages);
+                } else if (currentPage >= totalPages - 2) {
+                  buttons.push(1, '...', totalPages - 2, totalPages - 1, totalPages);
+                } else {
+                  buttons.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
+                }
+              }
+
+              return buttons.map((btn, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => typeof btn === 'number' ? paginate(btn) : null}
+                  disabled={btn === '...'}
+                  style={{
+                    ...paginationButtonStyle(currentPage === btn),
+                    borderRadius: borderRadius.md,
+                    cursor: btn === '...' ? 'default' : 'pointer'
+                  }}
+                >
+                  {btn}
+                </button>
+              ));
+            })()}
+
+            {/* Next */}
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              style={{
+                ...paginationButtonStyle(false),
+                borderRadius: borderRadius.md,
+                opacity: currentPage === totalPages ? 0.3 : 1,
+                cursor: currentPage === totalPages ? 'default' : 'pointer'
+              }}
+            >
+              Berikutnya »
+            </button>
+          </div>
+        )}
+      </div>
+    </>
+  );
 }
 
 export default Dashboard;
