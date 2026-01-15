@@ -139,16 +139,17 @@ function Dashboard() {
     outline: 'none',
   });
 
+  const mapSectionRef = useRef(null); // Ref for scrolling to map
+
   const handleCardClick = (report) => {
     setSelectedReport(report.id);
     setMapCenter([Number(report.latitude), Number(report.longitude)]);
     setMapZoom(17);
 
-    // Scroll to map
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
+    // Smooth scroll to the map section explicitly
+    if (mapSectionRef.current) {
+      mapSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
 
     // Clear selection after animation
     setTimeout(() => setSelectedReport(null), 3000);
@@ -480,7 +481,7 @@ function Dashboard() {
         </div>
 
         {/* Map Section */}
-        <div style={mapSectionStyle}>
+        <div style={mapSectionStyle} ref={mapSectionRef}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
             <h2 style={{ ...mapTitleStyle, marginBottom: 0 }}>
               <MapPin size={28} color={colors.primary} />
