@@ -329,9 +329,9 @@ function FormLapor() {
 
   const retakeButtonStyle = {
     ...buttons.secondary,
-    background: 'rgba(255,255,255,0.1)',
+    background: 'rgba(0,0,0,0.7)', // Darker background for visibility
     color: '#fff',
-    border: '1px solid rgba(255,255,255,0.2)',
+    border: '1px solid rgba(255,255,255,0.3)',
     borderRadius: '50px',
     display: 'flex',
     alignItems: 'center',
@@ -341,15 +341,84 @@ function FormLapor() {
 
   const switchButtonStyle = {
     ...buttons.secondary,
-    background: 'rgba(255,255,255,0.1)',
+    background: 'rgba(0,0,0,0.7)',
     color: '#fff',
-    border: '1px solid rgba(255,255,255,0.2)',
+    border: '1px solid rgba(255,255,255,0.3)',
     borderRadius: '50px',
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
     padding: '14px 24px',
   };
+
+  // ... (mapTitleStyle, mapContainerStyle, etc)
+
+  // ... (inside the component body)
+
+  const toggleCamera = useCallback(() => {
+    // If we have multiple distinct video devices, cycle through them
+    if (devices.length > 1) {
+      const currentIndex = devices.findIndex(device => device.deviceId === activeDeviceId);
+      const nextIndex = (currentIndex + 1) % devices.length;
+      setActiveDeviceId(devices[nextIndex].deviceId);
+      setZoom(1); // Reset zoom
+    } else {
+      // Fallback: Just toggle facing mode if devices aren't enumerated clearly
+      setFacingMode(prev => prev === "user" ? "environment" : "user");
+      setActiveDeviceId(null); // Ensure we use facingMode constraint
+      setZoom(1);
+    }
+  }, [devices, activeDeviceId]);
+
+  // ... (in render)
+
+  {/* iPhone-style Zoom Buttons */ }
+  {
+    zoomSupported && !image && (
+      <div style={{
+        position: 'absolute',
+        bottom: '90px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        display: 'flex',
+        gap: '12px',
+        zIndex: 20,
+        background: 'rgba(0,0,0,0.3)',
+        padding: '6px 12px',
+        borderRadius: '24px',
+        backdropFilter: 'blur(4px)',
+      }}>
+        {[1, 2, 5].filter(z => z <= maxZoom && z >= minZoom).map(zoomLevel => (
+          <button
+            key={zoomLevel}
+            onClick={(e) => {
+              e.preventDefault();
+              setZoom(zoomLevel);
+              const track = webcamRef.current.stream.getVideoTracks()[0];
+              track.applyConstraints({ advanced: [{ zoom: zoomLevel }] });
+            }}
+            style={{
+              background: zoom === zoomLevel ? colors.primary : 'rgba(255,255,255,0.2)',
+              color: '#fff',
+              border: zoom === zoomLevel ? 'none' : '1px solid rgba(255,255,255,0.2)',
+              borderRadius: '50%',
+              width: '32px',
+              height: '32px',
+              fontSize: '11px',
+              fontWeight: '700',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+          >
+            {zoomLevel}x
+          </button>
+        ))}
+      </div>
+    )
+  }
 
   const mapTitleStyle = {
     fontSize: '16px',
