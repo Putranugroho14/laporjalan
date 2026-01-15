@@ -218,7 +218,7 @@ function Auth() {
     // Switch (Register Mode): Overlay covers Right (Login). Register visible on Left.
 
     const formSectionStyle = {
-        position: 'absolute',
+        position: isMobile ? 'relative' : 'absolute',
         top: 0,
         height: '100%',
         width: '50%',
