@@ -82,9 +82,41 @@ function FormLapor() {
     setImage(imageSrc);
   }, [webcamRef]);
 
+  const [devices, setDevices] = useState([]);
+  const [activeDeviceId, setActiveDeviceId] = useState(null);
+
+  // Detect available cameras on mount
+  const handleDevices = useCallback(
+    (mediaDevices) => {
+      const videoDevices = mediaDevices.filter(({ kind }) => kind === "videoinput");
+      setDevices(videoDevices);
+
+      // Attempt to find back camera as default if available, else first device
+      if (videoDevices.length > 0 && !activeDeviceId) {
+        // Try to find a back camera first for "environment" default
+        const backCamera = videoDevices.find(device => device.label?.toLowerCase().includes('back') || device.label?.toLowerCase().includes('belakang'));
+        setActiveDeviceId(backCamera ? backCamera.deviceId : videoDevices[0].deviceId);
+      }
+    },
+    [activeDeviceId]
+  );
+
+  useEffect(() => {
+    navigator.mediaDevices.enumerateDevices().then(handleDevices);
+  }, [handleDevices]);
+
   const toggleCamera = useCallback(() => {
-    setFacingMode(prev => prev === "user" ? "environment" : "user");
-  }, []);
+    if (devices.length > 0) {
+      // Find current index
+      const currentIndex = devices.findIndex(device => device.deviceId === activeDeviceId);
+      // Next index (cycle)
+      const nextIndex = (currentIndex + 1) % devices.length;
+      setActiveDeviceId(devices[nextIndex].deviceId);
+
+      // Reset zoom when switching cameras
+      setZoom(1);
+    }
+  }, [devices, activeDeviceId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
