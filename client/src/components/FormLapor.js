@@ -29,8 +29,8 @@ function FormLapor() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
   // New Fields State
-  // Default aspect ratio: Portrait (9:16) for mobile feel, Landscape (16:9) for desktop
-  const [aspectRatio, setAspectRatio] = useState(window.innerWidth < 768 ? 9 / 16 : 16 / 9);
+  // Default aspect ratio: Portrait (3:4) for mobile native sensor (widest view), Landscape (16:9) for desktop
+  const [aspectRatio, setAspectRatio] = useState(window.innerWidth < 768 ? 3 / 4 : 16 / 9);
   const [damageType, setDamageType] = useState("");
   const [damageSeverity, setDamageSeverity] = useState("");
   const [trafficImpact, setTrafficImpact] = useState("");
