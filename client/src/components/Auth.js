@@ -477,6 +477,28 @@ function Auth() {
                             {isLoading ? "Memproses..." : "Daftar"}
                         </button>
                     </form>
+
+                    {/* Mobile Only Toggle Link */}
+                    {isMobile && (
+                        <div style={{ marginTop: '24px', textAlign: 'center' }}>
+                            <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px' }}>
+                                Sudah punya akun?{' '}
+                                <button
+                                    onClick={toggleMode}
+                                    style={{
+                                        background: 'none',
+                                        border: 'none',
+                                        color: '#3b82f6',
+                                        fontWeight: '700',
+                                        cursor: 'pointer',
+                                        fontSize: '14px'
+                                    }}
+                                >
+                                    Masuk
+                                </button>
+                            </p>
+                        </div>
+                    )}
                 </div>
 
                 {/* LOGIN FORM */}
@@ -513,34 +535,58 @@ function Auth() {
                             {isLoading ? "Memproses..." : "Masuk"}
                         </button>
                     </form>
+
+                    {/* Mobile Only Toggle Link */}
+                    {isMobile && (
+                        <div style={{ marginTop: '24px', textAlign: 'center' }}>
+                            <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px' }}>
+                                Belum punya akun?{' '}
+                                <button
+                                    onClick={toggleMode}
+                                    style={{
+                                        background: 'none',
+                                        border: 'none',
+                                        color: '#3b82f6',
+                                        fontWeight: '700',
+                                        cursor: 'pointer',
+                                        fontSize: '14px'
+                                    }}
+                                >
+                                    Daftar Sekarang
+                                </button>
+                            </p>
+                        </div>
+                    )}
                 </div>
 
-                {/* OVERLAY CONTAINER */}
-                <div style={overlayContainerStyle}>
-                    <div style={overlayStyle}>
+                {/* OVERLAY CONTAINER - DESKTOP ONLY */}
+                {!isMobile && (
+                    <div style={overlayContainerStyle}>
+                        <div style={overlayStyle}>
 
-                        <div style={overlayLeftStyle}>
-                            <h1 style={titleStyle}>Sudah Punya Akun?</h1>
-                            <p style={pStyle}>
-                                Silakan login dengan akun Anda.
-                            </p>
-                            <button style={ghostButtonStyle} onClick={toggleMode}>
-                                Masuk
-                            </button>
+                            <div style={overlayLeftStyle}>
+                                <h1 style={titleStyle}>Sudah Punya Akun?</h1>
+                                <p style={pStyle}>
+                                    Silakan login dengan akun Anda.
+                                </p>
+                                <button style={ghostButtonStyle} onClick={toggleMode}>
+                                    Masuk
+                                </button>
+                            </div>
+
+                            <div style={overlayRightStyle}>
+                                <h1 style={titleStyle}>Halo, Teman!</h1>
+                                <p style={pStyle}>
+                                    Daftar sekarang untuk mulai melapor.
+                                </p>
+                                <button style={ghostButtonStyle} onClick={toggleMode}>
+                                    Daftar
+                                </button>
+                            </div>
+
                         </div>
-
-                        <div style={overlayRightStyle}>
-                            <h1 style={titleStyle}>Halo, Teman!</h1>
-                            <p style={pStyle}>
-                                Daftar sekarang untuk mulai melapor.
-                            </p>
-                            <button style={ghostButtonStyle} onClick={toggleMode}>
-                                Daftar
-                            </button>
-                        </div>
-
                     </div>
-                </div>
+                )}
 
             </div>
         </div>
