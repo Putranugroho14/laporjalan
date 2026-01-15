@@ -549,7 +549,7 @@ function FormLapor() {
                       screenshotFormat="image/jpeg"
                       width="100%"
                       height="100%"
-                      mirrored={false}
+                      mirrored={facingMode === "user"}
                       videoConstraints={{ facingMode, aspectRatio }}
                       style={{ objectFit: 'cover' }}
                     />
