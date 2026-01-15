@@ -211,31 +211,45 @@ function LandingPage() {
 
           @media (max-width: 768px) {
             .landing-title {
-                font-size: 42px;
+                font-size: 32px; /* Smaller font as requested */
             }
             .landing-subtitle {
-                font-size: 16px;
+                font-size: 15px;
                 padding: 0 16px;
                 margin-bottom: 32px;
             }
             .stats-container {
-                flex-direction: column;
-                gap: 24px;
+                flex-direction: row; /* Side by side */
+                flex-wrap: wrap;
+                gap: 20px;
                 align-items: center;
-                padding-bottom: 80px; /* Space for scroll */
+                padding-bottom: 40px;
             }
             .stats-divider {
                 display: none;
             }
             .hero-badge {
-                font-size: 12px;
-                padding: 6px 12px;
+                font-size: 11px;
+                padding: 6px 14px;
+                margin-top: 40px; /* Push down from top */
+                margin-bottom: 16px;
+            }
+            /* Adjust stat items to center text on mobile */
+            .stats-container > div {
+                text-align: center; 
+                flex: 1 1 auto;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
             }
           }
 
           @media (max-width: 480px) {
              .landing-title {
-                font-size: 32px;
+                font-size: 28px; /* Even smaller for phones */
+            }
+            .stats-container {
+                gap: 12px;
             }
           }
         `}
