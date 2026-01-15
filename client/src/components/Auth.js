@@ -290,10 +290,14 @@ function Auth() {
 
     const inputIconStyle = {
         position: 'absolute',
-        left: '20px', // Increased from 15px
-        top: '50%',
-        transform: 'translateY(-50%)',
+        left: '20px',
+        top: 0,
+        bottom: 0,
+        margin: 'auto',
+        height: '18px', // Match icon size
         color: 'rgba(255,255,255,0.6)',
+        pointerEvents: 'none', // Ensure clicks pass through to input
+        zIndex: 5
     };
 
     const inputStyle = {
