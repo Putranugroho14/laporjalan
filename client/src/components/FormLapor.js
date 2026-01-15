@@ -346,9 +346,7 @@ function FormLapor() {
 
   // ... (inside the component body)
 
-  const toggleCamera = useCallback(() => {
-    setFacingMode(prev => prev === "user" ? "environment" : "user");
-  }, []);
+
 
   const mapTitleStyle = {
     fontSize: '16px',
