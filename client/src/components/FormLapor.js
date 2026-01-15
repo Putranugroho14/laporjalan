@@ -620,12 +620,6 @@ function FormLapor() {
                         3:4
                       </button>
                       <button
-                        onClick={() => setAspectRatio(9 / 16)}
-                        style={ratioButtonStyle(aspectRatio === 9 / 16)}
-                      >
-                        9:16
-                      </button>
-                      <button
                         onClick={() => setAspectRatio(16 / 9)}
                         style={ratioButtonStyle(aspectRatio === 16 / 9)}
                       >
