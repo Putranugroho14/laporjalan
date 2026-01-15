@@ -105,7 +105,9 @@ function FormLapor() {
     navigator.mediaDevices.enumerateDevices().then(handleDevices);
   }, [handleDevices]);
 
-
+  const toggleCamera = useCallback(() => {
+    setFacingMode(prev => prev === "user" ? "environment" : "user");
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -653,8 +655,7 @@ function FormLapor() {
                       height="100%"
                       mirrored={false}
                       videoConstraints={{
-                        deviceId: activeDeviceId ? { exact: activeDeviceId } : undefined,
-                        facingMode: activeDeviceId ? undefined : facingMode, // Fallback
+                        facingMode,
                         aspectRatio
                       }}
                       style={{ objectFit: 'cover' }}
@@ -672,60 +673,6 @@ function FormLapor() {
                         }
                       }}
                     />
-
-                    {/* iPhone-style Zoom Buttons */}
-                    {zoomSupported && !image && (
-                      <div style={{
-                        position: 'absolute',
-                        bottom: '90px',
-                        left: '50%',
-                        transform: 'translateX(-50%)',
-                        display: 'flex',
-                        gap: '12px',
-                        zIndex: 20,
-                        background: 'rgba(0,0,0,0.4)',
-                        padding: '6px 12px',
-                        borderRadius: '24px',
-                        backdropFilter: 'blur(4px)',
-                        border: '1px solid rgba(255,255,255,0.1)'
-                      }}>
-                        {[1, 2, 5]
-                          .filter(z => z <= maxZoom && z >= minZoom)
-                          .concat(minZoom < 1 ? [minZoom] : [])
-                          .sort((a, b) => a - b)
-                          .filter((v, i, a) => a.indexOf(v) === i)
-                          .map(zoomLevel => (
-                            <button
-                              key={zoomLevel}
-                              onClick={(e) => {
-                                e.preventDefault();
-                                setZoom(zoomLevel);
-                                const track = webcamRef.current.stream.getVideoTracks()[0];
-                                track.applyConstraints({ advanced: [{ zoom: zoomLevel }] });
-                              }}
-                              style={{
-                                background: zoom === zoomLevel ? '#facc15' : 'rgba(255,255,255,0.1)',
-                                color: zoom === zoomLevel ? '#000' : '#fff',
-                                border: zoom === zoomLevel ? 'none' : '1px solid rgba(255,255,255,0.2)',
-                                borderRadius: '50%',
-                                width: '36px',
-                                height: '36px',
-                                fontSize: '11px',
-                                fontWeight: '700',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                cursor: 'pointer',
-                                transition: 'all 0.2s',
-                                boxShadow: zoom === zoomLevel ? '0 0 10px rgba(250, 204, 21, 0.4)' : 'none'
-                              }}
-                            >
-                              {zoomLevel < 1 ? '.5' : zoomLevel}x
-                            </button>
-                          ))}
-                      </div>
-                    )}
-
 
                     {/* Ratio Controls */}
                     <div style={ratioContainerStyle}>
@@ -745,6 +692,56 @@ function FormLapor() {
                   </>
                 )}
               </div>
+
+              {/* Zoom Controls - Outside and Below Camera */}
+              {zoomSupported && !image && facingMode === 'environment' && (
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  gap: '12px',
+                  padding: '8px 16px',
+                  background: 'rgba(0,0,0,0.3)',
+                  borderRadius: '24px',
+                  width: 'fit-content',
+                  margin: '0 auto',
+                  marginBottom: '10px',
+                  backdropFilter: 'blur(4px)',
+                  border: '1px solid rgba(255,255,255,0.1)'
+                }}>
+                  {[0.5, 1, 2]
+                    .filter(z => (z >= minZoom && z <= maxZoom) || (z === 0.5 && minZoom < 1) || z === 1) // Show if capable
+                    .sort((a, b) => a - b)
+                    .map(zoomLevel => (
+                      <button
+                        key={zoomLevel}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setZoom(zoomLevel);
+                          const track = webcamRef.current.stream.getVideoTracks()[0];
+                          track.applyConstraints({ advanced: [{ zoom: zoomLevel }] });
+                        }}
+                        style={{
+                          background: zoom === zoomLevel ? '#facc15' : 'rgba(255,255,255,0.1)',
+                          color: zoom === zoomLevel ? '#000' : '#fff',
+                          border: zoom === zoomLevel ? 'none' : '1px solid rgba(255,255,255,0.2)',
+                          borderRadius: '50%',
+                          width: '36px',
+                          height: '36px',
+                          fontSize: '11px',
+                          fontWeight: '700',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s',
+                          boxShadow: zoom === zoomLevel ? '0 0 10px rgba(250, 204, 21, 0.4)' : 'none'
+                        }}
+                      >
+                        {zoomLevel < 1 ? '.5' : zoomLevel}x
+                      </button>
+                    ))}
+                </div>
+              )}
 
               <div style={buttonGroupStyle}>
                 {image ? (
